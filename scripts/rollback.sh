@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+# 临时禁用 BuildKit 以解决 gRPC 'x-docker-expose-session-sharedkey' 报错问题
+export DOCKER_BUILDKIT=0
+export COMPOSE_DOCKER_CLI_BUILD=0
+
 # ==========================================
 # N-Ball 自动化回滚脚本
 # 用法: ./scripts/rollback.sh [环境] (例如: ./scripts/rollback.sh dev, ./scripts/rollback.sh prod)
@@ -54,8 +58,10 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
     echo "🔄 重新构建并启动服务..."
+    export DOCKER_BUILDKIT=0
+    docker build -t nball-app:latest .
     docker-compose -f $COMPOSE_FILE $ENV_OPT down
-    docker-compose -f $COMPOSE_FILE $ENV_OPT up -d --build
+    docker-compose -f $COMPOSE_FILE $ENV_OPT up -d --no-build
     echo "✅ 服务回滚并重启成功！"
 else
     echo "⏹️ 操作已取消。"

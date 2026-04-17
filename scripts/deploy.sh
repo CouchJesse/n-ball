@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+# 临时禁用 BuildKit 以解决 gRPC 'x-docker-expose-session-sharedkey' 报错问题
+export DOCKER_BUILDKIT=0
+export COMPOSE_DOCKER_CLI_BUILD=0
+
 # ==========================================
 # N-Ball 自动化部署脚本
 # 用法: ./scripts/deploy.sh [环境] (例如: ./scripts/deploy.sh dev, ./scripts/deploy.sh prod)
@@ -49,9 +53,13 @@ fi
 echo "🛑 停止并移除旧容器..."
 docker-compose -f $COMPOSE_FILE $ENV_OPT down
 
-# 4. 构建并启动新容器
-echo "🏗️ 构建并启动容器..."
-docker-compose -f $COMPOSE_FILE $ENV_OPT up -d --build
+# 4. 构建镜像并启动新容器
+echo "🏗️ 构建应用镜像..."
+export DOCKER_BUILDKIT=0
+docker build -t nball-app:latest .
+
+echo "🚀 启动容器..."
+docker-compose -f $COMPOSE_FILE $ENV_OPT up -d --no-build
 
 # 5. 等待数据库启动就绪
 echo "⏳ 等待数据库就绪 (等待 10 秒)..."
