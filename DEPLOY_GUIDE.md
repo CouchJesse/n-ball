@@ -31,8 +31,8 @@ git --version
 
 将项目代码克隆到您的服务器上，并进入项目目录：
 ```bash
-git clone <your-repository-url>
-cd <project-directory>
+git clone https://github.com/CouchJesse/n-ball.git
+cd n-ball
 ```
 
 ---
