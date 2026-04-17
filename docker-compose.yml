@@ -23,6 +23,7 @@ services:
 
   web:
     image: nball-app:latest
+    pull_policy: never
     build: .
     ports:
       - "8000:8000"
@@ -45,6 +46,7 @@ services:
 
   worker:
     image: nball-app:latest
+    pull_policy: never
     build: .
     command: celery -A app.worker.celery_app worker --loglevel=info
     environment:
