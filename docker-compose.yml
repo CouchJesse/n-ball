@@ -24,12 +24,9 @@ services:
   web:
     image: nball-app:latest
     pull_policy: never
-    build: .
     ports:
       - "8000:8000"
     environment:
-      - DOCKER_BUILDKIT=0
-      - COMPOSE_DOCKER_CLI_BUILD=0
       - SQLALCHEMY_DATABASE_URI=postgresql://user:password@db/nball
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
@@ -47,11 +44,8 @@ services:
   worker:
     image: nball-app:latest
     pull_policy: never
-    build: .
     command: celery -A app.worker.celery_app worker --loglevel=info
     environment:
-      - DOCKER_BUILDKIT=0
-      - COMPOSE_DOCKER_CLI_BUILD=0
       - SQLALCHEMY_DATABASE_URI=postgresql://user:password@db/nball
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
